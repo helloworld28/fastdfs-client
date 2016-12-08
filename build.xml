@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!-- 根节点, 相对路径为当前文件所在目录, 默认target为war, 引入ivy命名空间 -->
+<project name="job" basedir="." default="jar">
+	<!-- property配置可以都移到配置文件中再引入配置文件 -->
+	<property name="bulid" value="bulid"/>
+	<property name="class" value="${bulid}/class"/>
+
+	<path id="lib.path">
+		<fileset dir="testLib"/>
+        <fileset dir="lib"/>
+	</path>
+
+	<target name="clean" description="删除编译目录">
+		<delete dir="${bulid}"/>
+	</target>
+
+
+	<target name="compile" description="编译任务, 依赖clean任务">
+		<mkdir dir="${class}"/>
+		<javac srcdir="src" destdir="${class}" includeantruntime="false" debug="true" encoding="UTF-8">
+			<classpath refid="lib.path"/><!-- 设置classpath -->
+		</javac>
+		<echo message="已完成编译java源文件"/>
+
+		<copy todir="${class}">
+			<fileset dir="src">
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+		<echo message="已完成复制配置文件"/>
+
+	</target>
+
+	<target name="jar" depends="compile" description="打包任务">
+		<jar jarfile="${bulid}/fastdfs-client.jar" basedir="${class}"/>
+		<delete dir="${class}"/>
+		<echo message="已编译完成"/>
+	</target>
+
+
+</project>
